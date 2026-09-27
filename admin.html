@@ -1,0 +1,2713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GDJSS 2021 - Admin Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f3f6f9;
+    color:#222;
+}
+
+header{
+    background:#0b3d2e;
+    color:white;
+    padding:22px 15px;
+    text-align:center;
+}
+
+header h1{
+    margin:0 0 6px;
+    font-size:23px;
+}
+
+header p{
+    margin:0;
+}
+
+.container{
+    width:95%;
+    max-width:1150px;
+    margin:22px auto;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    padding:12px;
+    margin:7px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+button{
+    border:0;
+    padding:11px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    margin:4px;
+}
+
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.login-btn{
+    width:100%;
+    background:#0b3d2e;
+    color:white;
+    font-size:16px;
+}
+
+.approve{
+    background:#198754;
+    color:white;
+}
+
+.reject{
+    background:#dc3545;
+    color:white;
+}
+
+.view{
+    background:#0d6efd;
+    color:white;
+}
+
+.edit{
+    background:#f0ad00;
+    color:white;
+}
+
+.delete{
+    background:#dc3545;
+    color:white;
+}
+
+.refresh{
+    background:#0b3d2e;
+    color:white;
+}
+
+.logout{
+    background:#dc3545;
+    color:white;
+    float:right;
+}
+
+.publish{
+    background:#198754;
+    color:white;
+}
+
+.unpublish{
+    background:#6c757d;
+    color:white;
+}
+
+.dashboard-menu{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.menu-btn{
+    background:#0b3d2e;
+    color:white;
+    width:100%;
+    margin:0;
+}
+
+.menu-btn.active{
+    background:#198754;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:white;
+    padding:18px 10px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 3px 10px rgba(0,0,0,.07);
+}
+
+.stat-number{
+    display:block;
+    font-size:27px;
+    font-weight:bold;
+    color:#0b3d2e;
+    margin-top:7px;
+}
+
+.member{
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:17px;
+    margin:14px 0;
+    background:#fff;
+}
+
+.member-layout{
+    display:flex;
+    gap:22px;
+    align-items:flex-start;
+}
+
+.member-details{
+    flex:1;
+}
+
+.member h3{
+    color:#0b3d2e;
+    margin-top:0;
+}
+
+.member-id{
+    color:#0b3d2e;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.photo{
+    width:135px;
+    height:135px;
+    object-fit:cover;
+    border-radius:10px;
+    border:3px solid #0b3d2e;
+    display:block;
+    background:#eee;
+}
+
+.no-photo{
+    width:135px;
+    height:135px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    background:#eee;
+    color:#777;
+    border-radius:10px;
+}
+
+.search{
+    margin-bottom:15px;
+}
+
+.announcement,
+.event{
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:15px;
+    margin:12px 0;
+}
+
+.announcement h3,
+.event h3{
+    margin-top:0;
+    color:#0b3d2e;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:15px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.badge-pending{
+    background:#fff3cd;
+    color:#856404;
+}
+
+.badge-approved{
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.badge-rejected{
+    background:#f8d7da;
+    color:#842029;
+}
+
+.badge-published{
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.badge-hidden{
+    background:#e2e3e5;
+    color:#41464b;
+}
+
+.hidden{
+    display:none;
+}
+
+.error{
+    color:#dc3545;
+    font-weight:bold;
+}
+
+.success{
+    color:#198754;
+    font-weight:bold;
+}
+
+.empty{
+    color:#777;
+}
+
+.loading{
+    color:#555;
+}
+
+#dashboard{
+    display:none;
+}
+
+#loginBox{
+    max-width:500px;
+    margin:40px auto;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:1000;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:650px;
+    max-height:90vh;
+    overflow:auto;
+    border-radius:14px;
+    padding:20px;
+}
+
+.close{
+    float:right;
+    background:#dc3545;
+    color:white;
+}
+
+.form-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+@media(max-width:800px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .dashboard-menu{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:600px){
+
+    header h1{
+        font-size:19px;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .dashboard-menu{
+        grid-template-columns:1fr 1fr;
+    }
+
+    button{
+        width:100%;
+        margin:4px 0;
+    }
+
+    .logout{
+        float:none;
+        width:100%;
+    }
+
+    .member-layout{
+        display:block;
+    }
+
+    .photo,
+    .no-photo{
+        width:120px;
+        height:120px;
+        margin-bottom:15px;
+    }
+
+    .form-row{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>GDJSS CENTRAL CLASS OF 2021</h1>
+<p>Admin Dashboard</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- LOGIN -->
+
+<div id="loginBox" class="card">
+
+<h2>🔐 Admin Login</h2>
+
+<input
+type="email"
+id="adminEmail"
+placeholder="Admin Email"
+autocomplete="username"
+>
+
+<input
+type="password"
+id="adminPassword"
+placeholder="Password"
+autocomplete="current-password"
+>
+
+<button
+type="button"
+class="login-btn"
+id="loginButton"
+>
+Login
+</button>
+
+<p id="loginMessage"></p>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboard">
+
+
+<div class="card">
+
+<button
+type="button"
+class="logout"
+id="logoutButton"
+>
+🚪 Logout
+</button>
+
+<h2>📊 Admin Dashboard</h2>
+
+<p>
+Welcome, <b id="adminEmailDisplay"></b>
+</p>
+
+</div>
+
+
+<!-- STATISTICS -->
+
+<div class="stats">
+
+<div class="stat">
+👥 Total Members
+<span
+class="stat-number"
+id="totalCount"
+>
+0
+</span>
+</div>
+
+<div class="stat">
+⏳ Pending
+<span
+class="stat-number"
+id="pendingCount"
+>
+0
+</span>
+</div>
+
+<div class="stat">
+✅ Approved
+<span
+class="stat-number"
+id="approvedCount"
+>
+0
+</span>
+</div>
+
+<div class="stat">
+❌ Rejected
+<span
+class="stat-number"
+id="rejectedCount"
+>
+0
+</span>
+</div>
+
+<div class="stat">
+💳 Paid
+<span
+class="stat-number"
+id="paidCount"
+>
+0
+</span>
+</div>
+
+</div>
+
+
+<!-- MENU -->
+
+<div class="dashboard-menu">
+
+<button
+class="menu-btn active"
+data-section="dashboardSection"
+>
+📊 Dashboard
+</button>
+
+<button
+class="menu-btn"
+data-section="membersSection"
+>
+👥 All Members
+</button>
+
+<button
+class="menu-btn"
+data-section="pendingSection"
+>
+⏳ Pending
+</button>
+
+<button
+class="menu-btn"
+data-section="announcementSection"
+>
+📢 Announcements
+</button>
+
+<button
+class="menu-btn"
+data-section="eventSection"
+>
+📅 Events
+</button>
+
+<button
+class="menu-btn"
+data-section="paymentSection"
+>
+💳 Payments
+</button>
+
+<button
+class="menu-btn"
+data-section="idSection"
+>
+🪪 Member IDs
+</button>
+
+</div>
+
+
+<!-- DASHBOARD SECTION -->
+
+<div
+id="dashboardSection"
+class="section"
+>
+
+<div class="card">
+
+<h2>📊 Overview</h2>
+
+<p>
+Welcome to the GDJSS CENTRAL CLASS OF 2021 Admin Control Panel.
+</p>
+
+<button
+type="button"
+class="refresh"
+id="refreshButton"
+>
+🔄 Refresh Dashboard
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ALL MEMBERS -->
+
+<div
+id="membersSection"
+class="section hidden"
+>
+
+<div class="card">
+
+<h2>👥 All Members</h2>
+
+<input
+type="text"
+id="memberSearch"
+class="search"
+placeholder="🔎 Search by name, phone, email or Member ID..."
+>
+
+<div id="allMembers">
+Loading...
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PENDING -->
+
+<div
+id="pendingSection"
+class="section hidden"
+>
+
+<div class="card">
+
+<h2>⏳ Pending Registrations</h2>
+
+<div id="pendingMembers">
+Loading...
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ANNOUNCEMENTS -->
+
+<div
+id="announcementSection"
+class="section hidden"
+>
+
+<div class="card">
+
+<h2>📢 Create Announcement</h2>
+
+<input
+type="text"
+id="announcementTitle"
+placeholder="Announcement Title"
+>
+
+<textarea
+id="announcementMessage"
+placeholder="Write announcement message..."
+></textarea>
+
+<button
+type="button"
+class="publish"
+id="createAnnouncementButton"
+>
+📢 Publish Announcement
+</button>
+
+<p id="announcementMessageBox"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>📢 All Announcements</h2>
+
+<div id="announcementsList">
+Loading...
+</div>
+
+</div>
+
+</div>
+
+
+<!-- EVENTS -->
+
+<div
+id="eventSection"
+class="section hidden"
+>
+
+<div class="card">
+
+<h2>📅 Create Event</h2>
+
+<input
+type="text"
+id="eventTitle"
+placeholder="Event Title"
+>
+
+<div class="form-row">
+
+<input
+type="date"
+id="eventDate"
+>
+
+<input
+type="text"
+id="eventTime"
+placeholder="Time"
+>
+
+</div>
+
+<input
+type="text"
+id="eventVenue"
+placeholder="Venue"
+>
+
+<textarea
+id="eventDescription"
+placeholder="Event description..."
+></textarea>
+
+<button
+type="button"
+class="publish"
+id="createEventButton"
+>
+📅 Add Event
+</button>
+
+<p id="eventMessageBox"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>📅 Events</h2>
+
+<div id="eventsList">
+Loading...
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PAYMENTS -->
+
+<div
+id="paymentSection"
+class="section hidden"
+>
+
+<div class="card">
+
+<h2>💳 Membership Payments</h2>
+
+<p>
+Membership Fee: <b>₦500</b>
+</p>
+
+<p>
+Paid Members:
+<b id="paidCount2">0</b>
+</p>
+
+<p class="empty">
+Payment records will be connected here when the payment table/webhook is added.
+</p>
+
+</div>
+
+</div>
+
+
+<!-- MEMBER IDS -->
+
+<div
+id="idSection"
+class="section hidden"
+>
+
+<div class="card">
+
+<h2>🪪 Member IDs</h2>
+
+<input
+type="text"
+id="idSearch"
+placeholder="🔎 Search Member ID or name..."
+>
+
+<div id="memberIds">
+Loading...
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- VIEW MEMBER MODAL -->
+
+<div
+id="memberModal"
+class="modal"
+>
+
+<div class="modal-box">
+
+<button
+type="button"
+class="close"
+onclick="closeMemberModal()"
+>
+✕ Close
+</button>
+
+<h2>👤 Member Registration</h2>
+
+<div id="memberModalContent">
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const SUPABASE_URL =
+"https://nfivwaxynfcqumupcttp.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_cW8I1UvkW1jvGNDeh_NTPg_QicAc9G7";
+
+const db =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY,
+{
+    auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:false
+    }
+}
+);
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let registrations = [];
+
+let currentAdmin = null;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loginBox =
+document.getElementById("loginBox");
+
+const dashboard =
+document.getElementById("dashboard");
+
+const loginButton =
+document.getElementById("loginButton");
+
+const logoutButton =
+document.getElementById("logoutButton");
+
+const refreshButton =
+document.getElementById("refreshButton");
+
+const loginMessage =
+document.getElementById("loginMessage");
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+loginButton.addEventListener(
+"click",
+loginAdmin
+);
+
+
+async function loginAdmin(){
+
+const email =
+document
+.getElementById("adminEmail")
+.value
+.trim();
+
+const password =
+document
+.getElementById("adminPassword")
+.value;
+
+
+if(!email || !password){
+
+showLoginMessage(
+"Please enter email and password.",
+"error"
+);
+
+return;
+
+}
+
+
+loginButton.disabled = true;
+
+loginButton.textContent =
+"Logging in...";
+
+
+try{
+
+const result =
+await db.auth.signInWithPassword({
+email:email,
+password:password
+});
+
+
+if(result.error){
+
+showLoginMessage(
+result.error.message,
+"error"
+);
+
+return;
+
+}
+
+
+const user =
+result.data.user;
+
+
+const isAdmin =
+await checkAdmin(user.id);
+
+
+if(!isAdmin){
+
+await db.auth.signOut();
+
+showLoginMessage(
+"This account is not authorized as an admin.",
+"error"
+);
+
+return;
+
+}
+
+
+currentAdmin = user;
+
+loginBox.style.display =
+"none";
+
+dashboard.style.display =
+"block";
+
+document.getElementById(
+"adminEmailDisplay"
+).textContent =
+user.email || "";
+
+await loadEverything();
+
+
+}catch(error){
+
+console.error(error);
+
+showLoginMessage(
+"Error: " + error.message,
+"error"
+);
+
+}finally{
+
+loginButton.disabled =
+false;
+
+loginButton.textContent =
+"Login";
+
+}
+
+}
+
+
+/* =========================================
+   CHECK ADMIN
+========================================= */
+
+async function checkAdmin(userId){
+
+const result =
+await db
+.from("admin_users")
+.select("user_id")
+.eq("user_id",userId)
+.maybeSingle();
+
+
+if(result.error){
+
+console.error(
+"Admin check:",
+result.error
+);
+
+return false;
+
+}
+
+
+return !!result.data;
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+logoutButton.addEventListener(
+"click",
+async function(){
+
+await db.auth.signOut();
+
+currentAdmin = null;
+
+dashboard.style.display =
+"none";
+
+loginBox.style.display =
+"block";
+
+document.getElementById(
+"adminPassword"
+).value = "";
+
+}
+);
+
+
+/* =========================================
+   MENU
+========================================= */
+
+document
+.querySelectorAll(".menu-btn")
+.forEach(button => {
+
+button.addEventListener(
+"click",
+function(){
+
+document
+.querySelectorAll(".menu-btn")
+.forEach(btn =>
+btn.classList.remove("active")
+);
+
+this.classList.add("active");
+
+document
+.querySelectorAll(".section")
+.forEach(section =>
+section.classList.add("hidden")
+);
+
+const target =
+document.getElementById(
+this.dataset.section
+);
+
+if(target){
+
+target.classList.remove(
+"hidden"
+);
+
+}
+
+}
+);
+
+});
+
+
+/* =========================================
+   LOAD EVERYTHING
+========================================= */
+
+async function loadEverything(){
+
+await loadRegistrations();
+
+await loadAnnouncements();
+
+await loadEvents();
+
+}
+
+
+/* =========================================
+   LOAD REGISTRATIONS
+========================================= */
+
+async function loadRegistrations(){
+
+document.getElementById(
+"allMembers"
+).innerHTML =
+"<p class='loading'>Loading members...</p>";
+
+document.getElementById(
+"pendingMembers"
+).innerHTML =
+"<p class='loading'>Loading pending members...</p>";
+
+document.getElementById(
+"memberIds"
+).innerHTML =
+"<p class='loading'>Loading Member IDs...</p>";
+
+
+const result =
+await db
+.from("registrations")
+.select("*")
+.order(
+"id",
+{
+ascending:false
+}
+);
+
+
+if(result.error){
+
+console.error(result.error);
+
+document.getElementById(
+"allMembers"
+).innerHTML =
+"<p class='error'>" +
+escapeHtml(result.error.message) +
+"</p>";
+
+return;
+
+}
+
+
+registrations =
+result.data || [];
+
+
+updateStatistics();
+
+renderAllMembers(
+registrations
+);
+
+renderPending(
+registrations.filter(
+member =>
+member.status === "pending"
+)
+);
+
+renderMemberIds(
+registrations.filter(
+member =>
+member.status === "approved"
+)
+);
+
+}
+
+
+/* =========================================
+   STATISTICS
+========================================= */
+
+function updateStatistics(){
+
+const total =
+registrations.length;
+
+const pending =
+registrations.filter(
+m => m.status === "pending"
+).length;
+
+const approved =
+registrations.filter(
+m => m.status === "approved"
+).length;
+
+const rejected =
+registrations.filter(
+m => m.status === "rejected"
+).length;
+
+
+/*
+   Payment status is detected from
+   common payment fields if they exist.
+*/
+
+const paid =
+registrations.filter(
+m =>
+m.payment_status === "paid" ||
+m.payment_status === "success" ||
+m.paid === true
+).length;
+
+
+document.getElementById(
+"totalCount"
+).textContent =
+total;
+
+document.getElementById(
+"pendingCount"
+).textContent =
+pending;
+
+document.getElementById(
+"approvedCount"
+).textContent =
+approved;
+
+document.getElementById(
+"rejectedCount"
+).textContent =
+rejected;
+
+document.getElementById(
+"paidCount"
+).textContent =
+paid;
+
+document.getElementById(
+"paidCount2"
+).textContent =
+paid;
+
+}
+
+
+/* =========================================
+   ALL MEMBERS
+========================================= */
+
+function renderAllMembers(members){
+
+const box =
+document.getElementById(
+"allMembers"
+);
+
+
+if(!members.length){
+
+box.innerHTML =
+"<p class='empty'>No members found.</p>";
+
+return;
+
+}
+
+
+box.innerHTML =
+members.map(
+member => {
+
+return createMemberCard(
+member,
+true
+);
+
+}
+).join("");
+
+}
+
+
+/* =========================================
+   PENDING
+========================================= */
+
+function renderPending(members){
+
+const box =
+document.getElementById(
+"pendingMembers"
+);
+
+
+if(!members.length){
+
+box.innerHTML =
+"<p class='empty'>No pending registrations.</p>";
+
+return;
+
+}
+
+
+box.innerHTML =
+members.map(
+member => {
+
+return createMemberCard(
+member,
+true
+);
+
+}
+).join("");
+
+}
+
+
+/* =========================================
+   MEMBER CARD
+========================================= */
+
+function createMemberCard(
+member,
+showActions
+){
+
+const status =
+member.status || "pending";
+
+
+let badgeClass =
+"badge-pending";
+
+if(status === "approved"){
+badgeClass =
+"badge-approved";
+}
+
+if(status === "rejected"){
+badgeClass =
+"badge-rejected";
+}
+
+
+let photoHTML =
+"";
+
+if(
+member.photo_url &&
+member.photo_url.trim() !== ""
+){
+
+photoHTML = `
+
+<img
+class="photo"
+src="${escapeAttribute(
+member.photo_url
+)}"
+alt="Passport Photo"
+loading="lazy"
+>
+
+`;
+
+}else{
+
+photoHTML = `
+
+<div class="no-photo">
+No Passport Photo
+</div>
+
+`;
+
+}
+
+
+let actions = `
+
+<button
+type="button"
+class="view"
+onclick="viewMember(${Number(member.id)})"
+>
+👤 View
+</button>
+
+`;
+
+
+if(
+status === "pending" &&
+showActions
+){
+
+actions += `
+
+<button
+type="button"
+class="approve"
+onclick="approveMember(${Number(member.id)})"
+>
+✓ Approve
+</button>
+
+<button
+type="button"
+class="reject"
+onclick="rejectMember(${Number(member.id)})"
+>
+✕ Reject
+</button>
+
+`;
+
+}
+
+
+return `
+
+<div class="member">
+
+<div class="member-layout">
+
+<div>
+${photoHTML}
+</div>
+
+<div class="member-details">
+
+<div>
+
+<span class="badge ${badgeClass}">
+${escapeHtml(
+status.toUpperCase()
+)}
+</span>
+
+</div>
+
+<div class="member-id">
+
+🆔
+${escapeHtml(
+member.member_id ||
+"Not Assigned"
+)}
+
+</div>
+
+<h3>
+${escapeHtml(
+member.full_name ||
+"No Name"
+)}
+</h3>
+
+<p>
+<b>Phone:</b>
+${escapeHtml(member.phone || "")}
+</p>
+
+<p>
+<b>Email:</b>
+${escapeHtml(member.email || "")}
+</p>
+
+<p>
+<b>State:</b>
+${escapeHtml(member.state || "")}
+</p>
+
+<p>
+<b>City:</b>
+${escapeHtml(member.city || "")}
+</p>
+
+</div>
+
+</div>
+
+<div>
+${actions}
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* =========================================
+   VIEW MEMBER
+========================================= */
+
+function viewMember(id){
+
+const member =
+registrations.find(
+m => Number(m.id) === Number(id)
+);
+
+
+if(!member){
+
+alert("Member not found.");
+
+return;
+
+}
+
+
+let photoHTML =
+member.photo_url
+?
+`<img class="photo" src="${escapeAttribute(member.photo_url)}" alt="Passport Photo">`
+:
+`<div class="no-photo">No Passport Photo</div>`;
+
+
+document.getElementById(
+"memberModalContent"
+).innerHTML = `
+
+${photoHTML}
+
+<h3>
+${escapeHtml(
+member.full_name || ""
+)}
+</h3>
+
+<p>
+<b>Member ID:</b>
+${escapeHtml(
+member.member_id || "Not Assigned"
+)}
+</p>
+
+<p>
+<b>Phone:</b>
+${escapeHtml(member.phone || "")}
+</p>
+
+<p>
+<b>Gender:</b>
+${escapeHtml(member.gender || "")}
+</p>
+
+<p>
+<b>State:</b>
+${escapeHtml(member.state || "")}
+</p>
+
+<p>
+<b>City:</b>
+${escapeHtml(member.city || "")}
+</p>
+
+<p>
+<b>Address:</b>
+${escapeHtml(member.address || "")}
+</p>
+
+<p>
+<b>Class / Section:</b>
+${escapeHtml(member.class_section || "")}
+</p>
+
+<p>
+<b>WhatsApp:</b>
+${escapeHtml(member.whatsapp || "")}
+</p>
+
+<p>
+<b>Occupation:</b>
+${escapeHtml(member.occupation || "")}
+</p>
+
+<p>
+<b>Email:</b>
+${escapeHtml(member.email || "")}
+</p>
+
+<p>
+<b>Status:</b>
+${escapeHtml(member.status || "")}
+</p>
+
+`;
+
+
+document.getElementById(
+"memberModal"
+).style.display =
+"flex";
+
+}
+
+
+function closeMemberModal(){
+
+document.getElementById(
+"memberModal"
+).style.display =
+"none";
+
+}
+
+
+/* =========================================
+   APPROVE
+========================================= */
+
+async function approveMember(
+registrationId
+){
+
+if(
+!confirm(
+"Are you sure you want to approve this member?"
+)
+){
+
+return;
+
+}
+
+
+try{
+
+const result =
+await db.rpc(
+"approve_registration",
+{
+registration_id:
+registrationId
+}
+);
+
+
+if(result.error){
+
+alert(
+"Approval error: " +
+result.error.message
+);
+
+return;
+
+}
+
+
+alert(
+"Member approved successfully!\n\n" +
+(
+result.data ||
+"Member ID generated."
+)
+);
+
+
+await loadRegistrations();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Error: " +
+error.message
+);
+
+}
+
+}
+
+
+/* =========================================
+   REJECT
+========================================= */
+
+async function rejectMember(
+registrationId
+){
+
+if(
+!confirm(
+"Are you sure you want to reject this registration?"
+)
+){
+
+return;
+
+}
+
+
+const result =
+await db
+.from("registrations")
+.update({
+status:"rejected"
+})
+.eq(
+"id",
+registrationId
+);
+
+
+if(result.error){
+
+alert(
+"Reject error: " +
+result.error.message
+);
+
+return;
+
+}
+
+
+alert(
+"Registration rejected."
+);
+
+
+await loadRegistrations();
+
+}
+
+
+/* =========================================
+   SEARCH MEMBERS
+========================================= */
+
+document
+.getElementById("memberSearch")
+.addEventListener(
+"input",
+function(){
+
+const search =
+this.value
+.toLowerCase()
+.trim();
+
+
+if(!search){
+
+renderAllMembers(
+registrations
+);
+
+return;
+
+}
+
+
+const filtered =
+registrations.filter(
+member => {
+
+const text = [
+
+member.full_name,
+member.phone,
+member.email,
+member.member_id,
+member.state,
+member.city
+
+]
+.join(" ")
+.toLowerCase();
+
+return text.includes(search);
+
+}
+);
+
+
+renderAllMembers(
+filtered
+);
+
+}
+);
+
+
+/* =========================================
+   MEMBER ID SEARCH
+========================================= */
+
+document
+.getElementById("idSearch")
+.addEventListener(
+"input",
+function(){
+
+const search =
+this.value
+.toLowerCase()
+.trim();
+
+
+const approved =
+registrations.filter(
+m => m.status === "approved"
+);
+
+
+if(!search){
+
+renderMemberIds(
+approved
+);
+
+return;
+
+}
+
+
+const filtered =
+approved.filter(
+member => {
+
+const text = [
+
+member.full_name,
+member.member_id
+
+]
+.join(" ")
+.toLowerCase();
+
+return text.includes(search);
+
+}
+);
+
+
+renderMemberIds(
+filtered
+);
+
+}
+);
+
+
+/* =========================================
+   MEMBER IDS
+========================================= */
+
+function renderMemberIds(members){
+
+const box =
+document.getElementById(
+"memberIds"
+);
+
+
+if(!members.length){
+
+box.innerHTML =
+"<p class='empty'>No approved Member IDs found.</p>";
+
+return;
+
+}
+
+
+box.innerHTML =
+members.map(
+member => `
+
+<div class="member">
+
+<h3>
+🪪
+${escapeHtml(
+member.member_id ||
+"Not Assigned"
+)}
+</h3>
+
+<p>
+<b>Name:</b>
+${escapeHtml(
+member.full_name || ""
+)}
+</p>
+
+<p>
+<b>Status:</b>
+Approved
+</p>
+
+<button
+type="button"
+class="view"
+onclick="viewMember(${Number(member.id)})"
+>
+👤 View Member
+</button>
+
+</div>
+
+`
+).join("");
+
+}
+
+
+/* =========================================
+   ANNOUNCEMENTS
+========================================= */
+
+async function loadAnnouncements(){
+
+const box =
+document.getElementById(
+"announcementsList"
+);
+
+box.innerHTML =
+"<p class='loading'>Loading announcements...</p>";
+
+
+const result =
+await db
+.from("announcements")
+.select("*")
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+
+if(result.error){
+
+box.innerHTML =
+"<p class='error'>" +
+escapeHtml(result.error.message) +
+"</p>";
+
+return;
+
+}
+
+
+const data =
+result.data || [];
+
+
+if(!data.length){
+
+box.innerHTML =
+"<p class='empty'>No announcements yet.</p>";
+
+return;
+
+}
+
+
+box.innerHTML =
+data.map(
+item => `
+
+<div class="announcement">
+
+<h3>
+${escapeHtml(item.title)}
+</h3>
+
+<p>
+${escapeHtml(item.message)}
+</p>
+
+<p>
+
+<span class="badge ${
+item.published
+?
+"badge-published"
+:
+"badge-hidden"
+}">
+
+${
+item.published
+?
+"Published"
+:
+"Hidden"
+}
+
+</span>
+
+</p>
+
+<button
+type="button"
+class="${
+item.published
+?
+"unpublish"
+:
+"publish"
+}"
+onclick="toggleAnnouncement(
+${Number(item.id)},
+${!item.published}
+)"
+>
+${
+item.published
+?
+"Hide"
+:
+"Publish"
+}
+</button>
+
+<button
+type="button"
+class="delete"
+onclick="deleteAnnouncement(
+${Number(item.id)}
+)"
+>
+🗑 Delete
+</button>
+
+</div>
+
+`
+).join("");
+
+}
+
+
+/* =========================================
+   CREATE ANNOUNCEMENT
+========================================= */
+
+document
+.getElementById(
+"createAnnouncementButton"
+)
+.addEventListener(
+"click",
+createAnnouncement
+);
+
+
+async function createAnnouncement(){
+
+const title =
+document
+.getElementById(
+"announcementTitle"
+)
+.value
+.trim();
+
+const message =
+document
+.getElementById(
+"announcementMessage"
+)
+.value
+.trim();
+
+
+if(!title || !message){
+
+showBoxMessage(
+"announcementMessageBox",
+"Please enter title and message.",
+"error"
+);
+
+return;
+
+}
+
+
+const result =
+await db
+.from("announcements")
+.insert({
+
+title:title,
+
+message:message,
+
+published:true
+
+});
+
+
+if(result.error){
+
+showBoxMessage(
+"announcementMessageBox",
+result.error.message,
+"error"
+);
+
+return;
+
+}
+
+
+document.getElementById(
+"announcementTitle"
+).value = "";
+
+document.getElementById(
+"announcementMessage"
+).value = "";
+
+
+showBoxMessage(
+"announcementMessageBox",
+"Announcement published successfully.",
+"success"
+);
+
+
+await loadAnnouncements();
+
+}
+
+
+/* =========================================
+   TOGGLE ANNOUNCEMENT
+========================================= */
+
+async function toggleAnnouncement(
+id,
+published
+){
+
+const result =
+await db
+.from("announcements")
+.update({
+published:published
+})
+.eq(
+"id",
+id
+);
+
+
+if(result.error){
+
+alert(
+"Error: " +
+result.error.message
+);
+
+return;
+
+}
+
+
+await loadAnnouncements();
+
+}
+
+
+/* =========================================
+   DELETE ANNOUNCEMENT
+========================================= */
+
+async function deleteAnnouncement(
+id
+){
+
+if(
+!confirm(
+"Delete this announcement?"
+)
+){
+
+return;
+
+}
+
+
+const result =
+await db
+.from("announcements")
+.delete()
+.eq(
+"id",
+id
+);
+
+
+if(result.error){
+
+alert(
+"Delete error: " +
+result.error.message
+);
+
+return;
+
+}
+
+
+await loadAnnouncements();
+
+}
+
+
+/* =========================================
+   EVENTS
+========================================= */
+
+async function loadEvents(){
+
+const box =
+document.getElementById(
+"eventsList"
+);
+
+box.innerHTML =
+"<p class='loading'>Loading events...</p>";
+
+
+const result =
+await db
+.from("events")
+.select("*")
+.order(
+"event_date",
+{
+ascending:true,
+nullsFirst:false
+}
+);
+
+
+if(result.error){
+
+box.innerHTML =
+"<p class='error'>" +
+escapeHtml(result.error.message) +
+"</p>";
+
+return;
+
+}
+
+
+const data =
+result.data || [];
+
+
+if(!data.length){
+
+box.innerHTML =
+"<p class='empty'>No events yet.</p>";
+
+return;
+
+}
+
+
+box.innerHTML =
+data.map(
+item => `
+
+<div class="event">
+
+<h3>
+${escapeHtml(item.title)}
+</h3>
+
+<p>
+📅 <b>Date:</b>
+${escapeHtml(item.event_date || "Not set")}
+</p>
+
+<p>
+⏰ <b>Time:</b>
+${escapeHtml(item.event_time || "Not set")}
+</p>
+
+<p>
+📍 <b>Venue:</b>
+${escapeHtml(item.venue || "Not set")}
+</p>
+
+<p>
+${escapeHtml(item.description || "")}
+</p>
+
+<button
+type="button"
+class="delete"
+onclick="deleteEvent(${Number(item.id)})"
+>
+🗑 Delete
+</button>
+
+</div>
+
+`
+).join("");
+
+}
+
+
+/* =========================================
+   CREATE EVENT
+========================================= */
+
+document
+.getElementById(
+"createEventButton"
+)
+.addEventListener(
+"click",
+createEvent
+);
+
+
+async function createEvent(){
+
+const title =
+document
+.getElementById(
+"eventTitle"
+)
+.value
+.trim();
+
+const eventDate =
+document
+.getElementById(
+"eventDate"
+)
+.value;
+
+const eventTime =
+document
+.getElementById(
+"eventTime"
+)
+.value
+.trim();
+
+const venue =
+document
+.getElementById(
+"eventVenue"
+)
+.value
+.trim();
+
+const description =
+document
+.getElementById(
+"eventDescription"
+)
+.value
+.trim();
+
+
+if(!title){
+
+showBoxMessage(
+"eventMessageBox",
+"Please enter event title.",
+"error"
+);
+
+return;
+
+}
+
+
+const result =
+await db
+.from("events")
+.insert({
+
+title:title,
+
+event_date:
+eventDate || null,
+
+event_time:
+eventTime || null,
+
+venue:
+venue || null,
+
+description:
+description || null
+
+});
+
+
+if(result.error){
+
+showBoxMessage(
+"eventMessageBox",
+result.error.message,
+"error"
+);
+
+return;
+
+}
+
+
+document.getElementById(
+"eventTitle"
+).value = "";
+
+document.getElementById(
+"eventDate"
+).value = "";
+
+document.getElementById(
+"eventTime"
+).value = "";
+
+document.getElementById(
+"eventVenue"
+).value = "";
+
+document.getElementById(
+"eventDescription"
+).value = "";
+
+
+showBoxMessage(
+"eventMessageBox",
+"Event added successfully.",
+"success"
+);
+
+
+await loadEvents();
+
+}
+
+
+/* =========================================
+   DELETE EVENT
+========================================= */
+
+async function deleteEvent(id){
+
+if(
+!confirm(
+"Delete this event?"
+)
+){
+
+return;
+
+}
+
+
+const result =
+await db
+.from("events")
+.delete()
+.eq(
+"id",
+id
+);
+
+
+if(result.error){
+
+alert(
+"Delete error: " +
+result.error.message
+);
+
+return;
+
+}
+
+
+await loadEvents();
+
+}
+
+
+/* =========================================
+   REFRESH
+========================================= */
+
+refreshButton.addEventListener(
+"click",
+loadEverything
+);
+
+
+/* =========================================
+   MESSAGES
+========================================= */
+
+function showLoginMessage(
+message,
+type
+){
+
+loginMessage.className =
+type;
+
+loginMessage.textContent =
+message;
+
+}
+
+
+function showBoxMessage(
+elementId,
+message,
+type
+){
+
+const box =
+document.getElementById(
+elementId
+);
+
+box.className =
+type;
+
+box.textContent =
+message;
+
+}
+
+
+/* =========================================
+   SECURITY HELPERS
+========================================= */
+
+function escapeHtml(value){
+
+return String(value ?? "")
+
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttribute(value){
+
+return escapeHtml(value);
+
+}
+
+
+/* =========================================
+   CHECK SESSION
+========================================= */
+
+async function checkSession(){
+
+const result =
+await db.auth.getSession();
+
+
+const session =
+result.data?.session;
+
+
+if(!session){
+
+return;
+
+}
+
+
+const isAdmin =
+await checkAdmin(
+session.user.id
+);
+
+
+if(!isAdmin){
+
+await db.auth.signOut();
+
+return;
+
+}
+
+
+currentAdmin =
+session.user;
+
+loginBox.style.display =
+"none";
+
+dashboard.style.display =
+"block";
+
+document.getElementById(
+"adminEmailDisplay"
+).textContent =
+session.user.email || "";
+
+await loadEverything();
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+checkSession();
+
+</script>
+
+</body>
+</html>
