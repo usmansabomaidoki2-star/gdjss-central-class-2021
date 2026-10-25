@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GDJSS CENTRAL CLASS OF 2021 - Member Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f3;
+    color: #222;
+}
+
+header {
+    background: #0b3d2e;
+    color: white;
+    padding: 22px 15px;
+}
+
+.header-inner {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.logout {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 7px;
+    font-weight: bold;
+}
+
+.container {
+    width: 95%;
+    max-width: 1100px;
+    margin: 25px auto;
+}
+
+.welcome {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.07);
+}
+
+.welcome h2 {
+    margin-top: 0;
+    color: #0b3d2e;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.07);
+    overflow-wrap: anywhere;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #0b3d2e;
+}
+
+.profile-row {
+    padding: 11px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-row:last-child {
+    border-bottom: none;
+}
+
+.profile-row strong {
+    display: inline-block;
+    width: 130px;
+}
+
+.member-id {
+    background: #0b3d2e;
+    color: white;
+    text-align: center;
+    padding: 20px 10px;
+    border-radius: 10px;
+}
+
+.member-id small {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.member-id strong {
+    font-size: 23px;
+    overflow-wrap: anywhere;
+}
+
+.status {
+    color: #198754;
+    font-weight: bold;
+}
+
+.action {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 7px;
+    background: #0b3d2e;
+    color: white;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.action:hover {
+    background: #07543d;
+}
+
+.secondary {
+    background: #555;
+}
+
+.message {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    margin: 20px 0;
+    overflow-wrap: anywhere;
+}
+
+.error {
+    color: #b42318;
+    font-weight: bold;
+}
+
+.error-details {
+    background: #fff0f0;
+    color: #7a1515;
+    padding: 15px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+}
+
+footer {
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+    padding: 30px 15px;
+}
+
+@media(max-width:700px) {
+    .header-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-row strong {
+        display: block;
+        width: auto;
+        margin-bottom: 4px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+        <div>
+            <h1>GDJSS CENTRAL CLASS OF 2021</h1>
+            <p>Member Dashboard</p>
+        </div>
+
+        <button class="logout" id="logoutButton">Logout</button>
+    </div>
+</header>
+
+<main class="container">
+
+    <div id="loading" class="message">
+        Loading your member dashboard...
+    </div>
+
+    <div id="errorBox" class="message" style="display:none;">
+        <h3 class="error">Unable to load your membership</h3>
+        <p id="errorMessage"></p>
+        <div id="errorDetails" class="error-details" style="display:none;"></div>
+        <button class="action" onclick="loadMember()">Try Again</button>
+        <button class="action secondary" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="dashboard" style="display:none;">
+
+        <section class="welcome">
+            <h2 id="welcomeName">Welcome</h2>
+            <p>Welcome to your GDJSS Central Class of 2021 Member Portal.</p>
+        </section>
+
+        <div class="grid">
+
+            <section class="card">
+                <h3>🪪 My Member ID</h3>
+
+                <div class="member-id">
+                    <small>Your Official Member ID</small>
+                    <strong id="memberId">-</strong>
+                </div>
+
+                <button class="action" onclick="openIdCard()">
+                    View My ID Card
+                </button>
+            </section>
+
+            <section class="card">
+                <h3>✅ Membership Status</h3>
+
+                <div class="profile-row">
+                    <strong>Status:</strong>
+                    <span class="status" id="memberStatus">-</span>
+                </div>
+
+                <div class="profile-row">
+                    <strong>Member ID:</strong>
+                    <span id="statusMemberId">-</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h3>👤 My Profile</h3>
+
+                <div class="profile-row">
+                    <strong>Full Name:</strong>
+                    <span id="fullName">-</span>
+                </div>
+
+                <div class="profile-row">
+                    <strong>Email:</strong>
+                    <span id="email">-</span>
+                </div>
+
+                <div class="profile-row">
+                    <strong>Gender:</strong>
+                    <span id="gender">-</span>
+                </div>
+
+                <div class="profile-row">
+                    <strong>Phone:</strong>
+                    <span id="phone">-</span>
+                </div>
+
+                <div class="profile-row">
+                    <strong>Occupation:</strong>
+                    <span id="occupation">-</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h3>📍 Location & Class</h3>
+
+                <div class="profile-row">
+                    <strong>State:</strong>
+                    <span id="state">-</span>
+                </div>
+
+                <div class="profile-row">
+                    <strong>City:</strong>
+                    <span id="city">-</span>
+                </div>
+
+                <div class="profile-row">
+                    <strong>Address:</strong>
+                    <span id="address">-</span>
+                </div>
+
+                <div class="profile-row">
+                    <strong>Class:</strong>
+                    <span id="classSection">-</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h3>📢 Announcements</h3>
+                <p>No announcements yet.</p>
+                <button class="action" onclick="showComingSoon()">
+                    View Announcements
+                </button>
+            </section>
+
+            <section class="card">
+                <h3>📅 Events</h3>
+                <p>No events available yet.</p>
+                <button class="action" onclick="showComingSoon()">
+                    View Events
+                </button>
+            </section>
+
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    GDJSS Central Class of 2021 Association
+</footer>
+
+<script>
+"use strict";
+
+/* =========================================
+   SUPABASE CONFIGURATION
+========================================= */
+
+const SUPABASE_URL =
+    "https://nfivwaxynfcqumupcttp.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_cW8I1UvkW1jvGNDeh_NTPg_QicAc9G7";
+
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const loading = document.getElementById("loading");
+const dashboard = document.getElementById("dashboard");
+const errorBox = document.getElementById("errorBox");
+const errorMessage = document.getElementById("errorMessage");
+const errorDetails = document.getElementById("errorDetails");
+
+function showError(title, error) {
+    loading.style.display = "none";
+    dashboard.style.display = "none";
+    errorBox.style.display = "block";
+
+    errorMessage.textContent = title;
+
+    if (error) {
+        console.error("GDJSS DASHBOARD ERROR:", error);
+
+        errorDetails.style.display = "block";
+        errorDetails.textContent =
+            "Message: " + (error.message || "Unknown error") +
+            "\nCode: " + (error.code || "Not provided") +
+            "\nDetails: " + (error.details || "Not provided") +
+            "\nHint: " + (error.hint || "Not provided");
+    } else {
+        errorDetails.style.display = "none";
+        errorDetails.textContent = "";
+    }
+}
+
+/* =========================================
+   LOAD MEMBER
+========================================= */
+
+async function loadMember() {
+    loading.style.display = "block";
+    loading.textContent = "Loading your member dashboard...";
+
+    dashboard.style.display = "none";
+    errorBox.style.display = "none";
+
+    try {
+        /* 1. CHECK LOGIN SESSION */
+
+        const {
+            data: sessionData,
+            error: sessionError
+        } = await db.auth.getSession();
+
+        if (sessionError) {
+            showError("Unable to check your login session.", sessionError);
+            return;
+        }
+
+        const user = sessionData.session?.user;
+
+        if (!user) {
+            window.location.href = "member-login.html";
+            return;
+        }
+
+        /* 2. LOAD MEMBER ACCOUNT */
+
+        const {
+            data: account,
+            error: accountError
+        } = await db
+            .from("member_accounts")
+            .select("member_id, registration_id, is_active")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+        if (accountError) {
+            showError(
+                "Error checking your member account. Please share the error details with the website administrator.",
+                accountError
+            );
+            return;
+        }
+
+        if (!account) {
+            showError(
+                "Your GDJSS member account was not found. Please contact the administrator."
+            );
+            return;
+        }
+
+        if (account.is_active !== true) {
+            showError(
+                "Your member account is currently inactive. Please contact the administrator."
+            );
+            return;
+        }
+
+        if (!account.registration_id) {
+            showError(
+                "Your member account has no linked registration. Please contact the administrator."
+            );
+            return;
+        }
+
+        /* 3. LOAD REGISTRATION */
+
+        const {
+            data: member,
+            error: memberError
+        } = await db
+            .from("registrations")
+            .select(
+                "id, user_id, full_name, email, gender, phone, occupation, state, city, address, class_section, status, member_id"
+            )
+            .eq("id", account.registration_id)
+            .maybeSingle();
+
+        if (memberError) {
+            showError(
+                "Error checking approval or reading your registration.",
+                memberError
+            );
+            return;
+        }
+
+        if (!member) {
+            showError(
+                "Registration not found or you do not have permission to view it. Please contact the administrator."
+            );
+            return;
+        }
+
+        /* 4. VERIFY REGISTRATION OWNERSHIP */
+
+        if (member.user_id !== user.id) {
+            showError(
+                "Your login account does not match the user linked to this registration. Please contact the administrator."
+            );
+            return;
+        }
+
+        /* 5. CHECK APPROVAL */
+
+        if (
+            String(member.status || "").toLowerCase() !== "approved"
+        ) {
+            showError(
+                "Your registration is not approved yet. Current status: " +
+                (member.status || "Unknown")
+            );
+            return;
+        }
+
+        /* 6. DISPLAY MEMBER DATA */
+
+        document.getElementById("welcomeName").textContent =
+            "Welcome, " + (member.full_name || "Member");
+
+        const officialMemberId =
+            member.member_id || account.member_id || "-";
+
+        document.getElementById("memberId").textContent =
+            officialMemberId;
+
+        document.getElementById("statusMemberId").textContent =
+            officialMemberId;
+
+        document.getElementById("memberStatus").textContent =
+            "Approved";
+
+        document.getElementById("fullName").textContent =
+            member.full_name || "-";
+
+        document.getElementById("email").textContent =
+            member.email || user.email || "-";
+
+        document.getElementById("gender").textContent =
+            member.gender || "-";
+
+        document.getElementById("phone").textContent =
+            member.phone || "-";
+
+        document.getElementById("occupation").textContent =
+            member.occupation || "-";
+
+        document.getElementById("state").textContent =
+            member.state || "-";
+
+        document.getElementById("city").textContent =
+            member.city || "-";
+
+        document.getElementById("address").textContent =
+            member.address || "-";
+
+        document.getElementById("classSection").textContent =
+            member.class_section || "-";
+
+        /* 7. SHOW DASHBOARD */
+
+        loading.style.display = "none";
+        errorBox.style.display = "none";
+        dashboard.style.display = "block";
+
+    } catch (error) {
+        showError(
+            "An unexpected error occurred while loading your dashboard.",
+            error
+        );
+    }
+}
+
+/* =========================================
+   ID CARD
+========================================= */
+
+function openIdCard() {
+    window.location.href = "member-card.html";
+}
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+async function logout() {
+    const {
+        error
+    } = await db.auth.signOut();
+
+    if (error) {
+        console.error("Logout error:", error);
+    }
+
+    window.location.href = "member-login.html";
+}
+
+document.getElementById("logoutButton")
+    .addEventListener("click", logout);
+
+/* =========================================
+   COMING SOON
+========================================= */
+
+function showComingSoon() {
+    alert("This feature will be available soon.");
+}
+
+/* =========================================
+   START
+========================================= */
+
+loadMember();
+</script>
+
+</body>
+  </html>
