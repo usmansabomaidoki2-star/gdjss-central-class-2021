@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GDJSS CENTRAL CLASS OF 2021 - Member Login</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #071b46, #164e9b, #ed70b5);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 460px;
+    background: #fff;
+    padding: 28px;
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(0,0,0,.25);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.logo {
+    width: 75px;
+    height: 75px;
+    margin: auto;
+    border-radius: 50%;
+    background: #0b367b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+h1 {
+    color: #103779;
+    font-size: 21px;
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+h2 {
+    font-size: 19px;
+    color: #123c7a;
+    margin-top: 10px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    margin: 15px 0 7px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #1557a5;
+    box-shadow: 0 0 0 2px rgba(21,87,165,.1);
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #12458f;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0b326c;
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.secondary {
+    background: #ed70b5;
+}
+
+.secondary:hover {
+    background: #d94a98;
+}
+
+.link-button {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    color: #12458f;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+.message {
+    margin-top: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.hidden {
+    display: none;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 22px 0;
+}
+
+.footer {
+    text-align: center;
+    color: #777;
+    font-size: 12px;
+    margin-top: 25px;
+    line-height: 1.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <div class="logo">GDJSS</div>
+
+        <h1>GDJSS CENTRAL CLASS OF 2021 ASSOCIATION</h1>
+
+        <p>
+            Official Member Portal<br>
+            Login or create your member account
+        </p>
+    </div>
+
+
+    <!-- LOGIN SECTION -->
+
+    <section id="loginSection">
+
+        <h2>Member Login</h2>
+
+        <form id="loginForm">
+
+            <label for="loginEmail">Email Address</label>
+            <input
+                type="email"
+                id="loginEmail"
+                autocomplete="email"
+                required
+            >
+
+            <label for="loginPassword">Password</label>
+            <input
+                type="password"
+                id="loginPassword"
+                autocomplete="current-password"
+                required
+            >
+
+            <button type="submit" id="loginButton">
+                Login to My Account
+            </button>
+
+        </form>
+
+        <div id="loginMessage" class="message" role="status"></div>
+
+        <span class="link-button" onclick="showCreateAccount()">
+            Create New Member Account
+        </span>
+
+        <span class="link-button" onclick="showForgotPassword()">
+            Forgot Password?
+        </span>
+
+    </section>
+
+
+    <!-- CREATE ACCOUNT SECTION -->
+
+    <section id="createSection" class="hidden">
+
+        <h2>Create Member Account</h2>
+
+        <p style="font-size:14px;color:#666;line-height:1.6">
+            Use the same email address you provided during registration.
+            Your registration must be approved by the administrator
+            before you can access membership services.
+        </p>
+
+        <form id="createForm">
+
+            <label for="createEmail">Registered Email Address</label>
+            <input
+                type="email"
+                id="createEmail"
+                autocomplete="email"
+                required
+            >
+
+            <label for="createPassword">Create Password</label>
+            <input
+                type="password"
+                id="createPassword"
+                minlength="6"
+                autocomplete="new-password"
+                required
+            >
+
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+                type="password"
+                id="confirmPassword"
+                minlength="6"
+                autocomplete="new-password"
+                required
+            >
+
+            <button type="submit" id="createButton">
+                Create My Account
+            </button>
+
+        </form>
+
+        <div id="createMessage" class="message" role="status"></div>
+
+        <span class="link-button" onclick="showLogin()">
+            Back to Login
+        </span>
+
+    </section>
+
+
+    <!-- FORGOT PASSWORD SECTION -->
+
+    <section id="forgotSection" class="hidden">
+
+        <h2>Reset Password</h2>
+
+        <p style="font-size:14px;color:#666;line-height:1.6">
+            Enter the email address associated with your account.
+        </p>
+
+        <form id="forgotForm">
+
+            <label for="forgotEmail">Email Address</label>
+            <input
+                type="email"
+                id="forgotEmail"
+                autocomplete="email"
+                required
+            >
+
+            <button type="submit" id="forgotButton">
+                Send Password Reset Email
+            </button>
+
+        </form>
+
+        <div id="forgotMessage" class="message" role="status"></div>
+
+        <span class="link-button" onclick="showLogin()">
+            Back to Login
+        </span>
+
+    </section>
+
+
+    <!-- SESSION SECTION -->
+
+    <section id="sessionSection" class="hidden">
+
+        <h2>Member Account</h2>
+
+        <p id="sessionMessage" class="message">
+            Checking your membership...
+        </p>
+
+        <button
+            type="button"
+            id="openPaymentButton"
+            class="hidden"
+            onclick="openPayment()"
+        >
+            Continue to Payment
+        </button>
+
+        <button
+            type="button"
+            class="secondary"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </section>
+
+
+    <div class="footer">
+        GDJSS CENTRAL CLASS OF 2021 ASSOCIATION<br>
+        Official Member Portal
+    </div>
+
+</div>
+
+
+<script>
+/* =========================================
+   SUPABASE CONFIGURATION
+========================================= */
+
+const SUPABASE_URL =
+    "https://nfivwaxynfcqumupcttp.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_cW8I1UvkW1jvGNDeh_NTPg_QicAc9G7";
+
+const PAYMENT_URL =
+    "https://usmansabomaidoki2-star.github.io/gdjss-central-class-2021/payment.html";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+const db = supabaseClient;
+
+
+/* =========================================
+   SHOW AND HIDE SECTIONS
+========================================= */
+
+function hideAllSections() {
+
+    document.getElementById("loginSection").classList.add("hidden");
+
+    document.getElementById("createSection").classList.add("hidden");
+
+    document.getElementById("forgotSection").classList.add("hidden");
+
+    document.getElementById("sessionSection").classList.add("hidden");
+}
+
+
+function showLogin() {
+
+    hideAllSections();
+
+    document.getElementById("loginSection").classList.remove("hidden");
+}
+
+
+function showCreateAccount() {
+
+    hideAllSections();
+
+    document.getElementById("createSection").classList.remove("hidden");
+}
+
+
+function showForgotPassword() {
+
+    hideAllSections();
+
+    document.getElementById("forgotSection").classList.remove("hidden");
+}
+
+
+/* =========================================
+   CREATE GDJSS MEMBER ACCOUNT
+========================================= */
+
+document.getElementById("createForm").addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        const email = document
+            .getElementById("createEmail")
+            .value
+            .trim()
+            .toLowerCase();
+
+        const password = document
+            .getElementById("createPassword")
+            .value;
+
+        const confirmPassword = document
+            .getElementById("confirmPassword")
+            .value;
+
+        const message = document.getElementById("createMessage");
+
+        const button = document.getElementById("createButton");
+
+        try {
+
+            if (!email || !password || !confirmPassword) {
+                throw new Error("Please fill in all fields.");
+            }
+
+            if (password.length < 6) {
+                throw new Error(
+                    "Password must contain at least 6 characters."
+                );
+            }
+
+            if (password !== confirmPassword) {
+                throw new Error("Passwords do not match.");
+            }
+
+            button.disabled = true;
+
+            message.style.color = "#555";
+            message.textContent = "Creating your account...";
+
+            const {
+                data,
+                error
+            } = await db.auth.signUp({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                throw new Error(
+                    "Account creation failed: " + error.message
+                );
+            }
+
+            if (!data.user) {
+                throw new Error(
+                    "Account creation could not be completed. Please try again."
+                );
+            }
+
+            /*
+              If email confirmation is required,
+              the user must confirm before logging in.
+            */
+
+            if (!data.session) {
+
+                message.style.color = "#0b4f9c";
+
+                message.textContent =
+                    "Your account has been created. Please check your email and confirm your account. After confirmation, return to this page and log in.";
+
+                return;
+            }
+
+            message.textContent =
+                "Checking your approved GDJSS membership...";
+
+            const {
+                data: linkedMember,
+                error: linkError
+            } = await db.rpc(
+                "link_approved_member_account"
+            );
+
+            if (linkError) {
+
+                await db.auth.signOut();
+
+                throw new Error(
+                    "Your login account was created, but membership linking failed: " +
+                    linkError.message
+                );
+            }
+
+            if (!linkedMember || linkedMember.success !== true) {
+
+                await db.auth.signOut();
+
+                throw new Error(
+                    "Your membership could not be verified. Please contact the administrator."
+                );
+            }
+
+            message.style.color = "#16853b";
+
+            message.textContent =
+                "Account created and membership linked successfully. Opening payment page...";
+
+            setTimeout(function() {
+                window.location.href = PAYMENT_URL;
+            }, 1000);
+
+        } catch (error) {
+
+            console.error("Create account error:", error);
+
+            message.style.color = "#c62828";
+
+            message.textContent =
+                error.message || "Something went wrong. Please try again.";
+
+        } finally {
+
+            button.disabled = false;
+        }
+    }
+);
+
+
+/* =========================================
+   MEMBER LOGIN
+========================================= */
+
+document.getElementById("loginForm").addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        const email = document
+            .getElementById("loginEmail")
+            .value
+            .trim()
+            .toLowerCase();
+
+        const password = document
+            .getElementById("loginPassword")
+            .value;
+
+        const message = document.getElementById("loginMessage");
+
+        const button = document.getElementById("loginButton");
+
+        try {
+
+            button.disabled = true;
+
+            message.style.color = "#555";
+            message.textContent = "Logging in...";
+
+            const {
+                data,
+                error
+            } = await db.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                throw new Error(
+                    "Login failed: " + error.message
+                );
+            }
+
+            if (!data.user) {
+                throw new Error("Login could not be completed.");
+            }
+
+            message.textContent =
+                "Verifying your GDJSS membership...";
+
+            /*
+              Link the approved registration to the
+              authenticated account using the secure RPC.
+            */
+
+            const {
+                data: linkedMember,
+                error: linkError
+            } = await db.rpc(
+                "link_approved_member_account"
+            );
+
+            if (linkError) {
+
+                await db.auth.signOut();
+
+                throw new Error(
+                    "Membership verification failed: " +
+                    linkError.message
+                );
+            }
+
+            if (!linkedMember || linkedMember.success !== true) {
+
+                await db.auth.signOut();
+
+                throw new Error(
+                    "Your GDJSS membership could not be verified."
+                );
+            }
+
+            /*
+              Check the member account belonging
+              to the currently logged-in user.
+            */
+
+            const {
+                data: account,
+                error: accountError
+            } = await db
+                .from("member_accounts")
+                .select("user_id, registration_id, member_id, is_active, payment_status")
+                .eq("user_id", data.user.id)
+                .maybeSingle();
+
+            if (accountError) {
+
+                await db.auth.signOut();
+
+                throw new Error(
+                    "Could not check your member account: " +
+                    accountError.message
+                );
+            }
+
+            if (!account) {
+
+                await db.auth.signOut();
+
+                throw new Error(
+                    "Your member account was not found. Please contact the administrator."
+                );
+            }
+
+            if (!account.is_active) {
+
+                await db.auth.signOut();
+
+                throw new Error(
+                    "Your membership is not active. Please contact the administrator."
+                );
+            }
+
+            message.style.color = "#16853b";
+
+            message.textContent =
+                "Login successful. Opening your membership payment page...";
+
+            setTimeout(function() {
+                window.location.href = PAYMENT_URL;
+            }, 1000);
+
+        } catch (error) {
+
+            console.error("Login error:", error);
+
+            message.style.color = "#c62828";
+
+            message.textContent =
+                error.message || "Login failed. Please try again.";
+
+        } finally {
+
+            button.disabled = false;
+        }
+    }
+);
+
+
+/* =========================================
+   FORGOT PASSWORD
+========================================= */
+
+document.getElementById("forgotForm").addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        const email = document
+            .getElementById("forgotEmail")
+            .value
+            .trim()
+            .toLowerCase();
+
+        const message = document.getElementById("forgotMessage");
+
+        const button = document.getElementById("forgotButton");
+
+        try {
+
+            button.disabled = true;
+
+            message.style.color = "#555";
+
+            message.textContent =
+                "Sending password reset email...";
+
+            const {
+                error
+            } = await db.auth.resetPasswordForEmail(
+                email,
+                {
+                    redirectTo: window.location.origin +
+                        window.location.pathname
+                }
+            );
+
+            if (error) {
+                throw new Error(
+                    "Password reset failed: " + error.message
+                );
+            }
+
+            message.style.color = "#16853b";
+
+            message.textContent =
+                "If the email is registered, a password reset email will be sent. Please check your inbox and spam folder.";
+
+        } catch (error) {
+
+            console.error("Password reset error:", error);
+
+            message.style.color = "#c62828";
+
+            message.textContent =
+                error.message || "Could not send the reset email.";
+
+        } finally {
+
+            button.disabled = false;
+        }
+    }
+);
+
+
+/* =========================================
+   OPEN PAYMENT PAGE
+========================================= */
+
+function openPayment() {
+
+    window.location.href = PAYMENT_URL;
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+async function logout() {
+
+    const {
+        error
+    } = await db.auth.signOut();
+
+    if (error) {
+        alert("Logout failed: " + error.message);
+        return;
+    }
+
+    showLogin();
+
+    document.getElementById("loginMessage").textContent =
+        "You have logged out successfully.";
+}
+
+
+/* =========================================
+   CHECK EXISTING SESSION
+========================================= */
+
+async function checkSession() {
+
+    const {
+        data,
+        error
+    } = await db.auth.getSession();
+
+    if (error) {
+        console.error("Session check error:", error);
+        showLogin();
+        return;
+    }
+
+    if (!data.session) {
+        showLogin();
+        return;
+    }
+
+    hideAllSections();
+
+    document.getElementById("sessionSection").classList.remove("hidden");
+
+    const message = document.getElementById("sessionMessage");
+
+    message.style.color = "#555";
+
+    message.textContent = "Checking your membership...";
+
+    try {
+
+        const {
+            data: linkedMember,
+            error: linkError
+        } = await db.rpc("link_approved_member_account");
+
+        if (linkError) {
+            throw new Error(linkError.message);
+        }
+
+        if (!linkedMember || linkedMember.success !== true) {
+            throw new Error("Your membership could not be verified.");
+        }
+
+        const {
+            data: account,
+            error: accountError
+        } = await db
+            .from("member_accounts")
+            .select("user_id, registration_id, member_id, is_active, payment_status")
+            .eq("user_id", data.session.user.id)
+            .maybeSingle();
+
+        if (accountError) {
+            throw new Error(accountError.message);
+        }
+
+        if (!account || !account.is_active) {
+            throw new Error(
+                "Your membership is not active or could not be found."
+            );
+        }
+
+        message.style.color = "#16853b";
+
+        message.textContent =
+            "Welcome back! Member ID: " + account.member_id;
+
+        document
+            .getElementById("openPaymentButton")
+            .classList.remove("hidden");
+
+    } catch (error) {
+
+        console.error("Membership check error:", error);
+
+        message.style.color = "#c62828";
+
+        message.textContent =
+            "Membership verification failed: " + error.message;
+
+    }
+}
+
+
+/* =========================================
+   START APPLICATION
+========================================= */
+
+checkSession();
+
+
+/* =========================================
+   AUTHENTICATION STATE CHANGES
+========================================= */
+
+db.auth.onAuthStateChange(function(event, session) {
+
+    if (event === "SIGNED_OUT") {
+        showLogin();
+    }
+
+});
+</script>
+
+</body>
+</html>
