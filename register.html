@@ -1,0 +1,468 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  
+<title>GDJSS CENTRAL CLASS OF 2021 - Registration</title>  
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  
+  
+<style>  
+* {  
+    box-sizing: border-box;  
+}  
+  
+body {  
+    margin: 0;  
+    padding: 20px 12px;  
+    font-family: Arial, sans-serif;  
+    background: #f0f4f8;  
+    color: #222;  
+}  
+  
+.container {  
+    max-width: 650px;  
+    margin: 20px auto;  
+    background: #fff;  
+    padding: 25px;  
+    border-radius: 12px;  
+    box-shadow: 0 4px 18px rgba(0,0,0,.08);  
+}  
+  
+.header {  
+    text-align: center;  
+    margin-bottom: 25px;  
+}  
+  
+.header h1 {  
+    color: #075e36;  
+    font-size: 23px;  
+    margin-bottom: 8px;  
+}  
+  
+.header p {  
+    color: #666;  
+    line-height: 1.5;  
+}  
+  
+label {  
+    display: block;  
+    font-weight: bold;  
+    margin: 15px 0 7px;  
+}  
+  
+input, select, textarea {  
+    width: 100%;  
+    padding: 12px;  
+    border: 1px solid #ccd3dc;  
+    border-radius: 7px;  
+    font-size: 15px;  
+    background: #fff;  
+}  
+  
+textarea {  
+    resize: vertical;  
+    min-height: 80px;  
+}  
+  
+button, .button {  
+    display: block;  
+    width: 100%;  
+    border: none;  
+    padding: 13px;  
+    border-radius: 7px;  
+    font-size: 16px;  
+    font-weight: bold;  
+    cursor: pointer;  
+    text-align: center;  
+    text-decoration: none;  
+}  
+  
+.submit-btn {  
+    margin-top: 22px;  
+    color: #fff;  
+    background: #087443;  
+}  
+  
+.submit-btn:disabled {  
+    background: #8aab9b;  
+    cursor: wait;  
+}  
+  
+.login-btn {  
+    margin-top: 15px;  
+    color: #fff;  
+    background: #075e36;  
+}  
+  
+.message {  
+    display: none;  
+    padding: 14px;  
+    margin: 15px 0;  
+    border-radius: 7px;  
+    line-height: 1.6;  
+    overflow-wrap: anywhere;  
+}  
+  
+.success {  
+    display: block;  
+    color: #155724;  
+    background: #d4edda;  
+}  
+  
+.error {  
+    display: block;  
+    color: #721c24;  
+    background: #f8d7da;  
+}  
+  
+.info {  
+    display: block;  
+    color: #084298;  
+    background: #cfe2ff;  
+}  
+  
+.small {  
+    font-size: 13px;  
+    color: #666;  
+    line-height: 1.5;  
+}  
+  
+.footer {  
+    text-align: center;  
+    color: #777;  
+    margin-top: 22px;  
+    font-size: 13px;  
+}  
+  
+.hidden {  
+    display: none !important;  
+}  
+  
+@media (max-width: 480px) {  
+    .container {  
+        padding: 18px;  
+    }  
+  
+    .header h1 {  
+        font-size: 20px;  
+    }  
+}  
+</style>  
+</head>  
+  
+<body>  
+  
+<div class="container">  
+  
+    <div class="header">  
+        <h1>GDJSS CENTRAL CLASS OF 2021</h1>  
+        <h2>Member Registration</h2>  
+        <p>  
+            Fill in your correct information to register.  
+            Your registration must be approved by the Administrator  
+            before you can access your member dashboard.  
+        </p>  
+    </div>  
+  
+    <div id="message" class="message" role="status" aria-live="polite"></div>  
+  
+    <form id="registrationForm">  
+  
+        <label for="full_name">Full Name *</label>  
+        <input id="full_name" name="full_name" type="text"  
+               maxlength="150" autocomplete="name" required>  
+  
+        <label for="phone">Phone Number *</label>  
+        <input id="phone" name="phone" type="tel"  
+               maxlength="30" autocomplete="tel" required>  
+  
+        <label for="gender">Gender *</label>  
+        <select id="gender" name="gender" required>  
+            <option value="">Select Gender</option>  
+            <option value="Male">Male</option>  
+            <option value="Female">Female</option>  
+        </select>  
+  
+        <label for="state">State *</label>  
+        <input id="state" name="state" type="text"  
+               maxlength="100" value="Yobe" required>  
+  
+        <label for="city">City/Town *</label>  
+        <input id="city" name="city" type="text"  
+               maxlength="100" required>  
+  
+        <label for="address">Current Address *</label>  
+        <textarea id="address" name="address"  
+                  maxlength="500" required></textarea>  
+  
+        <label for="class_section">Class/Section *</label>  
+        <input id="class_section" name="class_section" type="text"  
+               maxlength="100" required>  
+  
+        <label for="whatsapp">WhatsApp Number</label>  
+        <input id="whatsapp" name="whatsapp" type="tel"  
+               maxlength="30">  
+  
+        <label for="occupation">Occupation</label>  
+        <input id="occupation" name="occupation" type="text"  
+               maxlength="150">  
+  
+        <label for="email">Email Address *</label>  
+        <input id="email" name="email" type="email"  
+               maxlength="254" autocomplete="email" required>  
+  
+        <label for="photo">Passport Photograph *</label>  
+        <input id="photo" name="photo" type="file"  
+               accept="image/jpeg,image/png,image/webp" required>  
+  
+        <p class="small">  
+            Accepted formats: JPG, PNG or WEBP. Maximum file size: 5MB.  
+            Please use an email address you can access.  
+        </p>  
+  
+        <button id="submitBtn" class="submit-btn" type="submit">  
+            Submit Registration  
+        </button>  
+  
+    </form>  
+  
+    <div id="nextActions" class="hidden">  
+        <a href="member-login.html" class="button login-btn">  
+            Go to Member Login  
+        </a>  
+    </div>  
+  
+    <div class="footer">  
+        GDJSS CENTRAL CLASS OF 2021  
+    </div>  
+  
+</div>  
+  
+<script>  
+"use strict";  
+  
+/*  
+  Use the existing Supabase project.  
+  The publishable key is intended for browser use.  
+  Database RLS policies must protect member information.  
+*/  
+  
+const SUPABASE_URL = "https://nfivwaxynfcqumupcttp.supabase.co";  
+const SUPABASE_KEY = "sb_publishable_cW8I1UvkW1jvGNDeh_NTPg_QicAc9G7";  
+  
+const db = window.supabase.createClient(  
+    SUPABASE_URL,  
+    SUPABASE_KEY,  
+    {  
+        auth: {  
+            persistSession: false,  
+            autoRefreshToken: false,  
+            detectSessionInUrl: false  
+        }  
+    }  
+);  
+  
+const form = document.getElementById("registrationForm");  
+const message = document.getElementById("message");  
+const submitBtn = document.getElementById("submitBtn");  
+const nextActions = document.getElementById("nextActions");  
+  
+function showMessage(text, type) {  
+    message.textContent = text;  
+    message.className = "message " + type;  
+    message.style.display = "block";  
+}  
+  
+function setSubmitting(isSubmitting) {  
+    submitBtn.disabled = isSubmitting;  
+    submitBtn.textContent = isSubmitting  
+        ? "Submitting... Please wait"  
+        : "Submit Registration";  
+}  
+  
+function safeFileExtension(file) {  
+    const name = file.name.toLowerCase();  
+  
+    if (name.endsWith(".jpg") || name.endsWith(".jpeg")) {  
+        return "jpg";  
+    }  
+  
+    if (name.endsWith(".png")) {  
+        return "png";  
+    }  
+  
+    if (name.endsWith(".webp")) {  
+        return "webp";  
+    }  
+  
+    return null;  
+}  
+  
+form.addEventListener("submit", async function(event) {  
+    event.preventDefault();  
+  
+    if (!form.reportValidity()) {  
+        return;  
+    }  
+  
+    const fullName = document.getElementById("full_name").value.trim();  
+    const phone = document.getElementById("phone").value.trim();  
+    const gender = document.getElementById("gender").value;  
+    const state = document.getElementById("state").value.trim();  
+    const city = document.getElementById("city").value.trim();  
+    const address = document.getElementById("address").value.trim();  
+    const classSection = document.getElementById("class_section").value.trim();  
+    const whatsapp = document.getElementById("whatsapp").value.trim();  
+    const occupation = document.getElementById("occupation").value.trim();  
+    const email = document.getElementById("email").value.trim().toLowerCase();  
+    const photo = document.getElementById("photo").files[0];  
+  
+    if (!photo) {  
+        showMessage("Please select your passport photograph.", "error");  
+        return;  
+    }  
+  
+    if (photo.size > 5 * 1024 * 1024) {  
+        showMessage("Your photograph is larger than 5MB. Please choose a smaller image.", "error");  
+        return;  
+    }  
+  
+    const extension = safeFileExtension(photo);  
+  
+    if (!extension) {  
+        showMessage("Please upload a JPG, PNG or WEBP image.", "error");  
+        return;  
+    }  
+  
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];  
+  
+    if (!allowedTypes.includes(photo.type)) {  
+        showMessage("The selected file is not a supported image type.", "error");  
+        return;  
+    }  
+  
+    setSubmitting(true);  
+    message.style.display = "none";  
+    nextActions.classList.add("hidden");  
+  
+    let uploadedPath = null;  
+  
+    try {  
+        /*  
+          Upload the passport photo to the existing public bucket.  
+          The bucket must allow uploads from the public registration page.  
+        */  
+  
+        const safeName = photo.name  
+            .replace(/\.[^/.]+$/, "")  
+            .replace(/[^a-zA-Z0-9_-]/g, "_")  
+            .slice(0, 50) || "passport";  
+  
+        const filePath =  
+            "members/" +  
+            Date.now() +  
+            "_" +  
+            Math.random().toString(36).slice(2, 10) +  
+            "_" +  
+            safeName +  
+            "." +  
+            extension;  
+  
+        const { data: uploadData, error: uploadError } =  
+            await db.storage  
+                .from("member-photos")  
+                .upload(filePath, photo, {  
+                    cacheControl: "3600",  
+                    upsert: false,  
+                    contentType: photo.type  
+                });  
+  
+        if (uploadError) {  
+            throw new Error("Photo upload failed: " + uploadError.message);  
+        }  
+  
+        uploadedPath = uploadData.path;  
+  
+        const { data: publicData } = db.storage  
+            .from("member-photos")  
+            .getPublicUrl(uploadData.path);  
+  
+        const photoUrl = publicData.publicUrl;  
+  
+        /*  
+          Important:  
+          The registration stays pending until the administrator approves it.  
+          No anonymous approval-status SELECT is performed on this page.  
+        */  
+  
+        const { error: insertError } = await db  
+            .from("registrations")  
+            .insert([{  
+                id: Date.now(),  
+                full_name: fullName,  
+                phone: phone,  
+                gender: gender,  
+                state: state,  
+                city: city,  
+                address: address,  
+                class_section: classSection,  
+                whatsapp: whatsapp || null,  
+                occupation: occupation || null,  
+                email: email,  
+                photo_url: photoUrl,  
+                status: "pending",  
+                payment_status: "unpaid"  
+            }]);  
+  
+        if (insertError) {  
+            /*  
+              If registration failed after upload, attempt to remove  
+              the orphaned photo so it does not remain unnecessarily.  
+            */  
+            if (uploadedPath) {  
+                await db.storage  
+                    .from("member-photos")  
+                    .remove([uploadedPath]);  
+            }  
+  
+            if (insertError.code === "23505") {  
+                throw new Error(  
+                    "This email or Member ID is already registered. " +  
+                    "Please use Member Login or contact the Administrator."  
+                );  
+            }  
+  
+            throw new Error("Registration failed: " + insertError.message);  
+        }  
+  
+        form.classList.add("hidden");  
+  
+        showMessage(  
+            "Your registration has been submitted successfully. " +  
+            "Your application is now PENDING ADMIN APPROVAL. " +  
+            "Please wait until the Administrator approves your registration. " +  
+            "After approval, use Member Login to access your account. " +  
+            "Submitting this form does not automatically create your login account.",  
+            "success"  
+        );  
+  
+        nextActions.classList.remove("hidden");  
+  
+    } catch (error) {  
+        console.error("Registration error:", error);  
+  
+        showMessage(  
+            error.message || "An unexpected error occurred. Please try again.",  
+            "error"  
+        );  
+  
+    } finally {  
+        setSubmitting(false);  
+    }  
+});  
+</script>  
+  
+</body>  
+</html>
